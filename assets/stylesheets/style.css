@@ -1,6 +1,50 @@
-#header {
-	background-color:green;
+#header, #footer {
+	width:100%;
+	overflow:hidden;
+	clear:both;
+	text-align:center;
+	margin:0;
+	padding:20px 0;
+	background-image:url(http://fc03.deviantart.net/fs39/i/2011/019/1/6/texture_102_by_sirius_sdz-d1rlzx7.jpg);
+
+	color:white;
 }
-#footer {
-	background-color:blue;
+#header{
+	background-position:center bottom;
+	margin-bottom:20px;
+}
+#footer{
+	margin-top:20px;
+}
+body {
+
+	background-color:#ddd;
+}
+#main{
+	width:100%;
+}
+#nav_bar{
+	text-align:center;
+	background-color:#eee;
+}
+.nav_link{
+	width:100px;
+}
+.nav_link:hover{
+	background-color:lightblue;
+}
+#page_content  {
+	width:1024px;
+	margin:0 auto;
+}
+#content_mid{
+	width:820px;
+	margin:0;
+	border:1px solid black;
+	float:left;
+}
+#right_bar {
+	float:right;
+	width:200px;
+	border:1px solid black;
 }
