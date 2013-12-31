@@ -1,4 +1,3 @@
-#!/usr/bin/php-cgi
 <?php
 $SERVER   = "localhost";
 $USERNAME = "vm10vf";

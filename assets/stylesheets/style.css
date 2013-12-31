@@ -9,6 +9,7 @@
 
 	color:white;
 }
+
 #header{
 	background-position:center bottom;
 	margin-bottom:20px;
@@ -22,6 +23,7 @@ body {
 }
 #main{
 	width:100%;
+	margin:25px;
 }
 #nav_bar{
 	text-align:center;
@@ -48,3 +50,9 @@ body {
 	width:200px;
 	border:1px solid black;
 }
+.labelOrder label
+         {
+            display:inline-block;
+            text-align: left;
+            width: 130px;
+         }

@@ -1,18 +1,7 @@
-#!/usr/bin/php-cgi
 <?php
 
 include 'globals.php';
-$pTitle = $_POST["title"];
-$pDescription = $_POST["description"];
-$pEventStart = $_POST["eventstart"];
-$pEventEnd = $_POST["eventend"];
-$pCycle = $_POST["cycle"];
-$pCount = $_POST["count"];
-$pUser = "2";
 
-
-deleteEvent(23);
-#buildEvent($pTitle,$pDescription,$pEventStart,$pEventEnd,$pCycle, $pCount, $pUser);
 function deleteEvent($nHeaderID)
 {
 	try
@@ -97,16 +86,15 @@ function SearchEvent($aWhere)
 		$stmt->bindParam(':whereClause', $sWhere);
 		
 
-		if (!is_null($aWhere["Interests"])
-		{
-			$sWhere = "eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN("
+		if (! is_null($aWhere["Interests"])){
+			$sWhere = "eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN(";
 			foreach($aWhere["Interests"] as &$nInterestID)
 			{
 				$Where .= $nInterestID . ", ";
 			}
 			$sWhere = substr($sWhere, 0, -2) . ")";
 		}
-	
+		$stmt->execute();
 		$result = $stmt->fetchall();
 	}
 	catch (Exception $e)
@@ -148,7 +136,7 @@ function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 	$db = null;
 }
 
-function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $sOwner)
+function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $nCount, $sOwner)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 
@@ -158,11 +146,12 @@ function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $s
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, us_id)
-				VALUES (:title, :description, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
+		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, eh_address, us_id)
+				VALUES (:title, :description, :address, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
 
 		$stmt->bindParam(':title', $sTitle);
 		$stmt->bindParam(':description', $sDescription);
+		$stmt->bindParam(':address', $sAddress);
 		$stmt->bindParam(':owner', $sOwner);
 
 
@@ -194,7 +183,7 @@ function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $s
 						$dtStart->add(new DateInterval('P7D'));
 						$dtEnd->add(new DateInterval('P7D'));
 						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s'));
+						$sEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();
 					}
 				}
@@ -203,12 +192,12 @@ function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $s
 			{
 				if (date_diff($dtStart,$dtEnd)->days < 14)
 				{
-					for ($i = 0; $i < $nCount; $i++)
+					for ($i = 1; $i < $nCount; $i++)
 					{
 						$dtStart->add(new DateInterval('P14D'));
 						$dtEnd->add(new DateInterval('P14D'));
 						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s'));
+						$sEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();							
 					}
 				}
@@ -224,7 +213,7 @@ function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $s
 					$tmonth = date("m", $sEnd);
 					$tyear = date("m", $sEnd);
 		
-					for ($i = 0; $i < $nCount-1; $i++)
+					for ($i = 1; $i < $nCount-1; $i++)
 					{			
 						if ($tmonth == 12)
 						{
@@ -245,7 +234,7 @@ function buildEvent($sTitle, $sDescription, $sStart, $sEnd, $nCycle, $nCount, $s
 						}
 						$dtStart = $dtEnd->sub($diDiff);
 						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s'));
+						$sEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();
 					}
 					
