@@ -14,9 +14,6 @@ Fall/winter
 		<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="assets/stylesheets/style.css">
 		<title> wewt.com </title>
-		<?php 
-			include 'database_objects.php';
-			 ?>
 	</head>
 
 	<body>
@@ -33,11 +30,7 @@ Fall/winter
 				<div id="right_bar" style="height:200px;">
 					Sidebar wewt <br />
 					tags<br />
-					<?php
-
-
-
-					?>
+					
 				</div>
 				<div style="clear:both;"></div>
 			</div>
