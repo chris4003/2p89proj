@@ -72,7 +72,7 @@ function getEventHead($nHeaderID)
 	return $result;
 }
 #search for events using an array parameters. currently only supports an array of interests(including any event that match any of those interests)
-function SearchEvent($aWhere)
+function SearchEvent($sTitle = null, $sDescription = null, $dStart = null, $dEnd = null, $aInterests = null)
 {
 	try
 	{
@@ -85,14 +85,21 @@ function SearchEvent($aWhere)
 							   WHERE :whereClause');
 		$stmt->bindParam(':whereClause', $sWhere);
 		
-
-		if (! is_null($aWhere["Interests"])){
-			$sWhere = "eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN(";
-			foreach($aWhere["Interests"] as &$nInterestID)
+		if $sTitle == null && $sDescription == null && $dStart == null && $dEnd == null && $aInterests == null)
+		{
+			$sWhere = 1;
+		}
+		else
+		{
+			if (!is_null($aInterests))
 			{
-				$Where .= $nInterestID . ", ";
+				$sWhere = "eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN(";
+				foreach($aInterests as &$nInterestID)
+				{
+					$Where .= $nInterestID . ", ";
+				}
+				$sWhere = substr($sWhere, 0, -2) . ")";
 			}
-			$sWhere = substr($sWhere, 0, -2) . ")";
 		}
 		$stmt->execute();
 		$result = $stmt->fetchall();
@@ -242,7 +249,11 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 			}
 			elseif ($nCycle == 4) #yearly
 			{
-				#todo
+				$dtStart->add(new DateInterval('P1Y'));
+				$dtEnd->add(new DateInterval('P1Y'));
+				$sStart = $dtStart->format('Y-m-d H:i:s');
+				$sEnd = $dtEnd->format('Y-m-d H:i:s');
+				$stmt->execute();		
 			}
 		}
 
@@ -252,12 +263,12 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 	
 
 		$db->commit();
-		echo "Insert Successful<br />";
+		return "";
 	}
 	catch (Exception $e)
 	{
 		$db->rollBack();
-		echo "Insert fail<br />" . $e->getMessage() . "<br />";	
+		return $e->getMessage();	
 	}
 	$db = null;
 }
