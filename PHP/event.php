@@ -4,6 +4,7 @@ include 'globals.php';
 
 function deleteEvent($nHeaderID)
 {
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
 	{
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
@@ -26,6 +27,7 @@ function deleteEvent($nHeaderID)
 }
 function deleteEventDate($nDateID)
 {
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
 	{
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
@@ -48,6 +50,7 @@ function deleteEventDate($nDateID)
 
 function getEventHead($nHeaderID)
 {
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
 	{
 		
@@ -72,35 +75,55 @@ function getEventHead($nHeaderID)
 	return $result;
 }
 #search for events using an array parameters. currently only supports an array of interests(including any event that match any of those interests)
-function SearchEvent($sTitle = null, $sDescription = null, $dStart = null, $dEnd = null, $aInterests = null)
+#returns array if successful, returns null if error. 
+function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart = "", $sEnd = "", $sInterests = "")
 {
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
 	{
 		
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('SELECT eh_id, eh_title, eh_description, eh_rating, us_id 
+
+		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_description, eh_address, ed_start, ed_end, eh_rating 
 							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
-							   WHERE :whereClause');
-		$stmt->bindParam(':whereClause', $sWhere);
+							   WHERE ";
 		
-		if $sTitle == null && $sDescription == null && $dStart == null && $dEnd == null && $aInterests == null)
+		if ($sTitle == "" && $sDescription == "" && $sAddress == "" && $sStart == "" && $sEnd == "" && $sInterests == "")
 		{
-			$sWhere = 1;
+			$sWhere = "1";
 		}
 		else
-		{
-			if (!is_null($aInterests))
+		{	
+			$sWhere = "";
+			if ($sTitle != "")
 			{
-				$sWhere = "eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN(";
-				foreach($aInterests as &$nInterestID)
-				{
-					$Where .= $nInterestID . ", ";
-				}
-				$sWhere = substr($sWhere, 0, -2) . ")";
+				$sWhere = "eh_title LIKE '%" . $sTitle . "%'";
+			}
+			if ($sDescription != "")
+			{	
+				$sWhere .= ($sWhere==""?"":" AND ") . "eh_description LIKE '%" . $sDescription . "%'";
+			}
+			if ($sAddress != "")
+			{
+				$sWhere .= ($sWhere==""?"":" AND ") . "eh_address LIKE '%" . $sAddress . "%'";
+			}
+			if ($sStart != "")
+			{
+				$sWhere .= ($sWhere==""?"":" AND ") . "ed_start >= '" . date("Y-m-d H:i:s", strtotime($sStart)) . "'";
+			}
+			if ($sEnd != "")
+			{
+				$sWhere .= ($sWhere==""?"":" AND ") . "ed_end <= '" . date("Y-m-d H:i:s", strtotime($sEnd)) . "'";
+			}
+			if ($sInterests != "")
+			{
+				$sWhere .= ($sWhere==""?"":" AND ") . 
+					"EventHeader.eh_id IN (SELECT DISTINCT eh_id from EventInterests where in_id IN(" . $sInterests . "))";
 			}
 		}
+		$stmt = $db->prepare($sFields . $sWhere);
 		$stmt->execute();
 		$result = $stmt->fetchall();
 	}
@@ -116,6 +139,7 @@ function SearchEvent($sTitle = null, $sDescription = null, $dStart = null, $dEnd
 
 function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 {
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
 	{
 		
@@ -256,12 +280,6 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 				$stmt->execute();		
 			}
 		}
-
-
-
-
-	
-
 		$db->commit();
 		return "";
 	}

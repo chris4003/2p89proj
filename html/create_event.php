@@ -59,15 +59,12 @@
             <label for="tags">Tags:</label><input type="text" id = "tags" name = "tags"/><a href="javascript:clearTags()">Clear</a><br />
                         <input type="hidden" id = "tagids" name = "tagids"/>
                         <select id="tag_select" onChange="tagPicked()">
-                           <option value="0"></option>
-                           <option value="1">Food</option>
-                           <option value="2">Gaming</option>
-                           <option value="2">Movies</option>
-                        </select>
                            <?php
-                              #echo get_interests_select_box()
+                              include '../php/interests.php';
+                              getInterestsOptions();
                            ?>
-                           <br />
+                        </select>
+                        <br />
             <input type="submit">
          </div>
       </form>

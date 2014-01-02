@@ -8,8 +8,7 @@
 
 include 'globals.php';
 
-$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
-$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
 #2 vmorsaint vince123
 #3 ctbullet chris
 #4 Nubzor nub
@@ -17,13 +16,14 @@ $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 #setUser("dave", "dave","dave", $db, $key);
 
 
-listusers(null);
 
 function listUsers($filter)
 {
-	global $db;
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 
 	# creating the statement  
+	$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
+	$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 	$sql = 'SELECT us_name, us_password, us_displayname from Users';
 	if (!is_null($filter))
 	{
@@ -51,7 +51,7 @@ function listUsers($filter)
 # create a new user by passing needed params
 function newUser($name, $password, $displayname, $email)
 {
-	global $db, $key;
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE, $key;
 	$stmt = $db->prepare('INSERT INTO  Users (us_name, us_password, us_location, us_displayname, us_email, us_admin)
 			VALUES (:name, :password, :location, :displayname, :email, :admin)');
 
