@@ -25,10 +25,11 @@
 					    $pInterests = $_GET["tagids"];
 
 					    $aEvents = SearchEvent($pTitle, $pDescription,$pAddress, $pEventStart, $pEventEnd, $pInterests);
+					    #date("Y/m/d 23:59:59")
 		          	}
 		          	else
 		          	{
-		          		$aEvents = SearchEvent();	
+		          		$aEvents = SearchEvent("","","", date("Y/m/d H:i:s"),  date("Y/m/d 23:59:59", time()+(7*24*3600)));	
 		          	}
 
 					if (!is_null($aEvents))
@@ -60,8 +61,8 @@
 								echo "<tr>" .
 							    		"<td><a href='show_event.php?id=" . $row["eh_id"] . "'>" . $row["eh_title"] . "</a></td>" .
 							    		"<td>" . $row["eh_address"] . "</td>" .
-							    		"<td>" . date_format($start,"M j, Y") . "</td>" .
-							    		"<td>" . date_format($end,"M j, Y") . "</td>" .
+							    		"<td>" . date_format($start,"M j, Y H:i") . "</td>" .
+							    		"<td>" . date_format($end,"M j, Y H:i") . "</td>" .
 							    		"<td>" . $row["eh_rating"] . "</td>" .
 							    	"</tr>";							
 							}
@@ -85,9 +86,11 @@
 				            <label for="eventstart">Start:</label> <input type="text" id = "eventstart" name = "eventstart"/><br />
 				            <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><br />   
 				            <script>
-					            $( "#eventstart" ).datepicker();
-					            $( "#eventend" ).datepicker();
+				            	/* shows time on datepicker, could be hidden using the alt-name input(hidden) and altformat parameter*/
+					            $( "#eventstart" ).datepicker({dateFormat: "mm/dd/yy 00:00:00"});
+					            $( "#eventend" ).datepicker({dateFormat: "mm/dd/yy 23:59:59"});
 				            </script>
+
 
 				            Tags: 
 				            <select id="tag_select" onChange="tagPicked()">

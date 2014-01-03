@@ -5,6 +5,7 @@
       ?>
       <title>Create Event</title>
       <script src="../assets/javascripts/toggle_count.js"></script>
+      <script src="../assets/javascripts/createEvent.js"></script>
    </head>
 
    <body>
@@ -21,8 +22,41 @@
                      $pTitle = $_POST["title"];
                      $pDescription = $_POST["description"];
                      $pAddress = $_POST["address"];
-                     $pEventStart = $_POST["eventstart"];
-                     $pEventEnd = $_POST["eventend"];
+                     if ($_POST["eventstarttime"] == "")
+                     {
+                        $pEventStart = $_POST["eventstart"] . "00:00:00";   
+                     }
+                     else
+                     {
+                        $pEventStart = $_POST["eventstart"] . $_POST["eventstarttime"];     
+                        if ($_POST["startampm"] == "PM")
+                        {
+                           $pEventStart = date("m/d/y H:i:s", strtotime($pEventStart) + (12*3600));       
+                        }
+                        else
+                        {
+                           $pEventStart = date("m/d/y H:i:s", strtotime($pEventStart));
+                        }
+                        
+                     }
+
+                     if ($_POST["eventendtime"] == "")
+                     {
+                        $pEventEnd = $_POST["eventend"] . "00:00:00";   
+                     }
+                     else
+                     {
+                        $pEventEnd = $_POST["eventend"] . $_POST["eventendtime"];     
+                        if ($_POST["endampm"] == "PM")
+                        {
+                           $pEventEnd = date("m/d/y H:i:s", strtotime($pEventEnd) + (12*3600));
+                        }
+                        else
+                        {
+                           $pEventEnd = date("m/d/y H:i:s", strtotime($pEventEnd));
+                        }
+                        
+                     }
                      $pCycle = $_POST["cycle"];
                      $pCount = $_POST["count"];
                      $sOwner = "2"; #fix, need to get actual userid from session
@@ -35,7 +69,7 @@
       <legend>
          New Event:
       </legend>
-      <form action = "create_event.php" method = "post">
+      <form action = "create_event.php" method = "post" onsubmit="return validateForm(this)">
          <br />
          <div class="labelOrder">
             <label for="title">Title:</label> <input type="text" id = "title" name = "title"/><br />
@@ -44,9 +78,9 @@
             <label for="eventstart">Start:</label> <input type="text" id = "eventstart" name = "eventstart"/><input type="text" id = "eventstarttime" name = "eventstarttime" placeholder="Enter Time" /><select id="startampm" name="startampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />
             <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><input type="text" id = "eventendtime" name = "eventendtime" placeholder="Enter Time" /><select id="endampm" name="endampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />   
             <script>
-                           $( "#eventstart" ).datepicker();
-                           $( "#eventend" ).datepicker();
-                        </script>
+               $( "#eventstart" ).datepicker();
+               $( "#eventend" ).datepicker();
+            </script>
             <label for="cycle">Occurence:</label> 
             <select id ="cycle" name ="cycle" onChange="toggleCount()">
                <option value="0">One-Time</option>

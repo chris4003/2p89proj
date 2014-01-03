@@ -218,12 +218,14 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 
 		$stmt = $db->prepare('INSERT INTO  EventDates (eh_id, ed_start, ed_end)
 		VALUES (@parenteh_ID, :start, :end)');
-
 		$dtStart = new DateTime($sStart);
 		$dtEnd = new DateTime($sEnd);
 
-		$stmt->bindParam(':start',$sStart);
-		$stmt->bindParam(':end',$sEnd);
+		$tStart = $dtStart->format('Y-m-d H:i:s');
+		$tEnd = $dtEnd->format('Y-m-d H:i:s');
+
+		$stmt->bindParam(':start',$tStart);
+		$stmt->bindParam(':end',$tEnd);
 			
 
 		#first event/once
@@ -233,15 +235,14 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 		{
 			if ($nCycle == 1) #weekly
 			{
-				echo $dtStart->format('Y-m-d H:i:s') . " <br /> " . $dtEnd->format('Y-m-d H:i:s') . "<br />";
 				if (date_diff($dtStart,$dtEnd)->days < 7)
 				{
 					for ($i = 1; $i < $nCount; $i++)
 					{
 						$dtStart->add(new DateInterval('P7D'));
 						$dtEnd->add(new DateInterval('P7D'));
-						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s');
+						$tStart = $dtStart->format('Y-m-d H:i:s');
+						$tEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();
 					}
 				}
@@ -254,8 +255,8 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 					{
 						$dtStart->add(new DateInterval('P14D'));
 						$dtEnd->add(new DateInterval('P14D'));
-						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s');
+						$tStart = $dtStart->format('Y-m-d H:i:s');
+						$tEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();							
 					}
 				}
@@ -263,15 +264,14 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 			}
 			elseif ($nCycle == 3) #monthly
 			{
-				if (date_diff($dtStart,$dtEnd) < 31)
+				$diDiff = date_diff($dtStart,$dtEnd);
+				if ($diDiff->format('%d') < 31)
 				{
-					$diDiff = date_diff($dtStart,$dtEnd);
-
-					$tday = date("d", $sEnd);
-					$tmonth = date("m", $sEnd);
-					$tyear = date("m", $sEnd);
+					$tday = (int) $dtEnd->format("d");
+					$tmonth = (int) $dtEnd->format("m");
+					$tyear = (int) $dtEnd->format("y");
 		
-					for ($i = 1; $i < $nCount-1; $i++)
+					for ($i = 1; $i < $nCount; $i++)
 					{			
 						if ($tmonth == 12)
 						{
@@ -282,17 +282,20 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 						{
 							$tmonth++;
 						}
-						if ($tday > date("d", "$tmonth/1/$tyear"))
+						#check to see if the day is greater than the last day of the month for that month.
+						$monthDays = cal_days_in_month(CAL_GREGORIAN,$tmonth,$tyear);
+						if ($tday > $monthDays)
 						{
-							$dtEnd = new DateTime("$tmonth/" . date("d", "$tmonth/1/$tyear") . "/$tyear");
+							$dtEnd = new DateTime("$tmonth/$monthDays/$tyear" . $dtEnd->format(" H:i:s"));
 						}
 						else
 						{
-							$dtEnd = new DateTime("$tmonth/" . $tday . "/$tyear");
+							$dtEnd = new DateTime("$tmonth/$tday/$tyear" . $dtEnd->format(" H:i:s"));
 						}
-						$dtStart = $dtEnd->sub($diDiff);
-						$sStart = $dtStart->format('Y-m-d H:i:s');
-						$sEnd = $dtEnd->format('Y-m-d H:i:s');
+						$dtStart = clone $dtEnd;
+						$dtStart->sub($diDiff);
+						$tStart = $dtStart->format('Y-m-d H:i:s');
+						$tEnd = $dtEnd->format('Y-m-d H:i:s');
 						$stmt->execute();
 					}
 					
@@ -302,8 +305,8 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 			{
 				$dtStart->add(new DateInterval('P1Y'));
 				$dtEnd->add(new DateInterval('P1Y'));
-				$sStart = $dtStart->format('Y-m-d H:i:s');
-				$sEnd = $dtEnd->format('Y-m-d H:i:s');
+				$tStart = $dtStart->format('Y-m-d H:i:s');
+				$tEnd = $dtEnd->format('Y-m-d H:i:s');
 				$stmt->execute();		
 			}
 		}
