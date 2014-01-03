@@ -74,6 +74,33 @@ function getEventHead($nHeaderID)
 	$db = null;
 	return $result;
 }
+function findEvent($nHeaderID)
+{
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
+	try
+	{
+		
+		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
+		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+		$db->begintransaction();
+		$stmt = $db->prepare('SELECT eh_id, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end
+								from EventHeader natural join EventDates
+							   WHERE eh_id = :headerID');
+
+		$stmt->bindParam(':headerID', $nHeaderID);
+		$stmt->execute();
+	
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+	}
+	catch (Exception $e)
+	{
+		echo "Select failed<br />" . $e->getMessage() . "<br />";	
+		$result = null;
+	}
+	$db = null;
+	return $result;
+}
 #search for events using an array parameters. currently only supports an array of interests(including any event that match any of those interests)
 #returns array if successful, returns null if error. 
 function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart = "", $sEnd = "", $sInterests = "")
@@ -86,7 +113,7 @@ function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart =
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
 
-		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_description, eh_address, ed_start, ed_end, eh_rating 
+		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_address, ed_start, ed_end, eh_rating 
 							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
 							   WHERE ";
 		

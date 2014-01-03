@@ -6,11 +6,9 @@
 	</head>
 
 	<body>
-		<?php 
-		include 'header.html'; 
-		?>
 		
 		<div id="main">
+		<?php include 'header.html'; ?>
 
 		<?php include 'nav_bar.html'; ?>
 			<div id="page_content">
@@ -30,7 +28,7 @@
 		          	}
 		          	else
 		          	{
-		          		$aEvents = SearchEvent("","","","","","");	
+		          		$aEvents = SearchEvent();	
 		          	}
 
 					if (!is_null($aEvents))
@@ -44,11 +42,10 @@
 							# showing the results  
 							echo "<table>
 								<tr>
-									<th colspan='6'>Events</th>
+									<th colspan='5'>Events</th>
 								</tr>
 								<tr>
 									<td> Title</td>
-									<td> Description</td>
 									<td> Address</td>
 									<td> Start</td>
 									<td> End</td>
@@ -58,12 +55,13 @@
 								
 							foreach ($aEvents as &$row) 
 							{
+								$start = date_create($row["ed_start"]);
+								$end = date_create($row["ed_end"]);
 								echo "<tr>" .
-							    		"<td>" . $row["eh_title"] . "</td>" .
-							    		"<td>" . $row["eh_description"] . "</td>" .
+							    		"<td><a href='show_event.php?id=" . $row["eh_id"] . "'>" . $row["eh_title"] . "</a></td>" .
 							    		"<td>" . $row["eh_address"] . "</td>" .
-							    		"<td>" . $row["ed_start"] . "</td>" .
-							    		"<td>" . $row["ed_end"] . "</td>" .
+							    		"<td>" . date_format($start,"M j, Y") . "</td>" .
+							    		"<td>" . date_format($end,"M j, Y") . "</td>" .
 							    		"<td>" . $row["eh_rating"] . "</td>" .
 							    	"</tr>";							
 							}
@@ -71,10 +69,14 @@
 							echo "</table>";
 						}
 					}
+					#var_dump($_SESSION);
 				?>
 
 				</div><!-- content-mid -->
 				<div id="right_bar" style="height:200px;">
+					<p>
+						Search for events by ... 
+					</p>
 					<form action = "index.php" method = "get">
 				         <div class="labelOrder">
 				            <label for="title">Title:</label> <input type="text" id = "title" name = "title"/><br />
@@ -87,14 +89,16 @@
 					            $( "#eventend" ).datepicker();
 				            </script>
 
-				            Tags: <input type="text" id = "tags" name = "tags"/><a href="javascript:clearTags()">Clear</a><br />
-				            <input type="hidden" id = "tagids" name = "tagids"/>
+				            Tags: 
 				            <select id="tag_select" onChange="tagPicked()">
 	                           <?php
 	                              include '../php/interests.php';
 	                              getInterestsOptions();
 	                           ?>
 				            </select>
+				            <input type="text" id = "tags" name = "tags"/>
+				            <a href="javascript:clearTags()">Clear</a><br />
+				            <input type="hidden" id = "tagids" name = "tagids"/>
 			            	<br />
 				            <input type="submit" value="Search" />
 				         </div>
@@ -102,8 +106,8 @@
 					
 				</div>
 				<div style="clear:both;"></div>
-			</div>
-		</div> <!-- main -->
+			</div><!-- page content bro -->
 		<?php include 'footer.html'; ?>
+		</div> <!-- main -->
 	</body>
 </html>

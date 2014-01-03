@@ -16,14 +16,26 @@
 }
 #footer{
 	margin-top:20px;
+	position:absolute; /* sticks footer to bottom of page*/
+	bottom:0;
 }
-body {
-
+html,body {
+	height:100%; /* fills the page so the footer is at the bottom*/
 	background-color:#ddd;
+	margin:0;
+}
+textarea{
+	vertical-align: top;
+}
+table {
+	width:100%;
 }
 #main{
+	background-color:inherit;
 	width:100%;
-	margin:25px;
+	min-height:100%;
+	position:relative;
+	background-image:url(http://www.limousine-hire-perth.com.au/C_RESTAURANT.jpg);
 }
 #nav_bar{
 	text-align:center;
@@ -36,19 +48,21 @@ body {
 	background-color:lightblue;
 }
 #page_content  {
-	width:1024px;
+	background-color:inherit;
+	padding:20px;
+	width:1200px;
 	margin:0 auto;
+	padding-bottom:112px; /*92 pixels is the footer + 20 padding*/
 }
 #content_mid{
+	background-color:inherit;
 	width:820px;
 	margin:0;
-	border:1px solid black;
 	float:left;
 }
 #right_bar {
 	float:right;
 	width:200px;
-	border:1px solid black;
 }
 .labelOrder label
          {

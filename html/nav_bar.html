@@ -1,5 +1,14 @@
 <div id="nav_bar">
 	<a href="index.php" class="nav_link">Home</a>
-	<a href="create_event.php" class="nav_link">Create Event</a>
-	<a href="login" class="nav_link">Login</a>
+	<?php
+	if (isset($_SESSION['username']))
+		echo '<a href="create_event.php" class="nav_link">Create Event</a>';
+	?>
+	<a href="about.php" class="nav_link">About</a>
+	<a href="contact_us.php" class="nav_link">Contact Us</a>
+	<?php
+	if (!isset($_SESSION['username']))
+		echo '<a href="new_user.php" class="nav_link">Register</a>';
+	?>
+	
 </div>

@@ -1,0 +1,55 @@
+<script>
+  jQuery(function(){
+
+  /*-------------------------------MENU BAR ANIMATION------------------------------------*/
+  function hideMenu(){
+    var height = "-" + jQuery('#byslogin').outerHeight(true) + "px"
+
+    jQuery('#byslogin').animate({top: height},500);
+  }
+  function showMenu(){
+    jQuery('#byslogin').animate({top: 0},500);
+  }
+
+  var height = "-" + jQuery('#byslogin').outerHeight(true) + "px";
+  jQuery('#byslogin').css('top', height);
+
+  jQuery('#byslogin').mouseenter(function(){
+    showMenu();
+    jQuery(this).clearQueue();
+    });
+  jQuery('#byslogin').mouseleave(function(){
+    hideMenu();
+    jQuery(this).clearQueue();
+  });
+});
+</script>
+
+<style>
+#byslogin{
+  position:absolute;
+  z-index:1;
+  background-color:#e8e8e8;
+
+  border: 2px groove;
+  padding:5px;
+  top:-500; /* default, will be over-ridden by the jQuery. */
+  right:0;
+}
+#login_tab{
+  width:100px;
+  height:30px;
+  position:relative;
+  bottom:-37px; /*30 px for height, 5 for the padding and 2 for border*/
+  
+}
+</style>
+
+
+<?php if(isset($_SESSION['username'])){  
+
+    include "_logout_form.html";
+ } else { 
+ 	include "_login_form.html";
+   } 
+?>
