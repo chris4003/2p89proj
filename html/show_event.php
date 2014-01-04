@@ -13,24 +13,22 @@
 		<?php include 'nav_bar.html'; ?>
 			<div id="page_content">
 				<div id="content_mid">
+					<?php include "../html/flash_message.php"; ?>
 					<?php 
 						include "../php/event.php";
 
 						$row = findEvent($_GET['id']);
 						
-						
-							echo "<br>";
-							$start = date_create($row["ed_start"]);
-							$end = date_create($row["ed_end"]);
+						$start = date_create($row["ed_start"]);
+						$end = date_create($row["ed_end"]);
 
-							echo $row["eh_title"] ;
-							echo $row["eh_description"] ;
-							echo $row["eh_address"];
-							echo $row["eh_city"];
-							echo date_format($start,"M j, Y - h:i A");
-							echo date_format($start,"M j, Y - h:i A");
-							echo $row["eh_rating"];	
-							echo $row["eh_TAGSBRO"];	
+						echo "<h1>".$row["eh_title"]."</h1><br>" ;
+						echo $row["eh_address"]."<br>";
+						echo $row["eh_city"]."<br>";
+						echo "Start: ".date_format($start,"M j, Y - h:i A")."<br>";
+						echo "End: &nbsp;".date_format($start,"M j, Y - h:i A")."<br>";
+						echo "<p>".$row["eh_description"]."</p>";
+						echo "<p>Tags:<br>".$row["tags"]."</p>";
 					?>
 
 				</div><!-- content-mid -->

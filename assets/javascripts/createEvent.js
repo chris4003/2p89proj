@@ -63,7 +63,7 @@ function validateForm(fCreateEvent)
 
 	if (!reTagIds.test(sInterests))
 	{
-		sErrors += "Invalid Interests\n";
+		sErrors += "Invalid Tags\n";
 	}
 
 	if (sErrors === "")

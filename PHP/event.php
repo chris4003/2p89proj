@@ -92,6 +92,7 @@ function findEvent($dateHeaderID)
 	
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+		addTagData($db,&$result);
 	}
 	catch (Exception $e)
 	{
@@ -111,9 +112,8 @@ function SearchEvent($sTitle = "", $sDescription = "", $sCity = "", $sStart = ""
 		
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-		$db->begintransaction();
-
-		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_city, ed_start, ed_end, eh_rating , ed_id
+		
+		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_city, ed_start, ed_end, eh_rating, eh_image_name, ed_id
 							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
 							   WHERE ";
 		
@@ -153,6 +153,12 @@ function SearchEvent($sTitle = "", $sDescription = "", $sCity = "", $sStart = ""
 		$stmt = $db->prepare($sFields . $sWhere);
 		$stmt->execute();
 		$result = $stmt->fetchall();
+
+		foreach ($result as &$row) 
+		{
+			addTagData($db,&$row);
+		}
+		
 	}
 	catch (Exception $e)
 	{
@@ -162,7 +168,23 @@ function SearchEvent($sTitle = "", $sDescription = "", $sCity = "", $sStart = ""
 	$db = null;
 	return $result;
 }
+function addTagData($db,$row){
+	#########################################################################################
+		#add tag data for the index page
+		
 
+			$stmt = $db->prepare("SELECT in_description from EventInterests natural join Interests where eh_id = " . $row["eh_id"]);
+			$stmt->execute();
+			$tags = $stmt->fetchall();
+
+			$tagArray = array();
+			foreach ($tags as &$tag) 
+			{
+				array_push($tagArray ,$tag["in_description"] );
+			}
+			$row["tags"] = implode(", ",$tagArray);
+		
+}
 
 function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 {
@@ -194,7 +216,7 @@ function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 	$db = null;
 }
 
-function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nCycle, $nCount, $sOwner,$sTags)
+function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nCycle, $nCount, $sOwner,$sTags,$sImage_name)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 
@@ -204,13 +226,14 @@ function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nC
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, eh_address,eh_city, us_id)
-				VALUES (:title, :description, :address,:city, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
+		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, eh_address,eh_city,eh_image_name, us_id)
+				VALUES (:title, :description, :address,:city,:image_name, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
 
 		$stmt->bindParam(':title', $sTitle);
 		$stmt->bindParam(':description', $sDescription);
 		$stmt->bindParam(':address', $sAddress);
 		$stmt->bindParam(':city', $sCity);
+		$stmt->bindParam(':image_name', $sImage_name);
 		$stmt->bindParam(':owner', $sOwner);
 
 
@@ -332,4 +355,5 @@ function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nC
 	}
 	$db = null;
 }
+
 ?>

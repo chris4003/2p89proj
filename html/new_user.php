@@ -13,6 +13,7 @@
 		<?php include 'nav_bar.html'; ?>
 			<div id="page_content">
 				<div id="content_mid">
+					<?php include "../html/flash_message.php"; ?>
 					<fieldset>
 						<legend>New User</legend>
 						<p>
