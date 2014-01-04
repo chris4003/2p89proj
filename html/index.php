@@ -19,12 +19,12 @@
 					{
 					    $pTitle = $_GET["title"];
 					    $pDescription = $_GET["description"];
-					    $pAddress = $_GET["address"];
+					    $pCity = $_GET["city"];
 					    $pEventStart = $_GET["eventstart"];
 					    $pEventEnd = $_GET["eventend"];
 					    $pInterests = $_GET["tagids"];
 
-					    $aEvents = SearchEvent($pTitle, $pDescription,$pAddress, $pEventStart, $pEventEnd, $pInterests);
+					    $aEvents = SearchEvent($pTitle, $pDescription,$pCity, $pEventStart, $pEventEnd, $pInterests);
 					    #date("Y/m/d 23:59:59")
 		          	}
 		          	else
@@ -47,10 +47,10 @@
 								</tr>
 								<tr>
 									<td> Title</td>
-									<td> Address</td>
+									<td> City</td>
 									<td> Start</td>
 									<td> End</td>
-									<td> Rating</td>
+									<td> Tags</td>
 								</tr>";
 
 								
@@ -59,10 +59,10 @@
 								$start = date_create($row["ed_start"]);
 								$end = date_create($row["ed_end"]);
 								echo "<tr>" .
-							    		"<td><a href='show_event.php?id=" . $row["eh_id"] . "'>" . $row["eh_title"] . "</a></td>" .
-							    		"<td>" . $row["eh_address"] . "</td>" .
-							    		"<td>" . date_format($start,"M j, Y H:i") . "</td>" .
-							    		"<td>" . date_format($end,"M j, Y H:i") . "</td>" .
+							    		"<td><a href='show_event.php?id=" . $row["ed_id"] . "'>" . $row["eh_title"] . "</a></td>" .
+							    		"<td>" . $row["eh_city"] . "</td>" .
+							    		"<td>" . date_format($start,"M j, Y - h:i A") . "</td>" .
+							    		"<td>" . date_format($end,"M j, Y - h:i A") . "</td>" .
 							    		"<td>" . $row["eh_rating"] . "</td>" .
 							    	"</tr>";							
 							}
@@ -74,7 +74,7 @@
 				?>
 
 				</div><!-- content-mid -->
-				<div id="right_bar" style="height:200px;">
+				<div id="right_bar" >
 					<p>
 						Search for events by ... 
 					</p>
@@ -82,7 +82,7 @@
 				         <div class="labelOrder">
 				            <label for="title">Title:</label> <input type="text" id = "title" name = "title"/><br />
 				            <label for="description">Description:</label> <input type="text" id = "description" name = "description" ><br />
-				            <label for="description">Address:</label> <input type="text" id = "address" name = "address" ><br />
+				            <label for="city">City:</label> <input type="text" id = "city" name = "city" ><br />
 				            <label for="eventstart">Start:</label> <input type="text" id = "eventstart" name = "eventstart"/><br />
 				            <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><br />   
 				            <script>
@@ -106,6 +106,7 @@
 				            <input type="submit" value="Search" />
 				         </div>
 				      </form>
+				<div style="clear:both;"></div>
 					
 				</div>
 				<div style="clear:both;"></div>

@@ -63,6 +63,8 @@ table {
 #right_bar {
 	float:right;
 	width:200px;
+	height:500px;
+	background-color:#BBBB00;
 }
 .labelOrder label
          {

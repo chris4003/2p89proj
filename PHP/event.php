@@ -74,7 +74,7 @@ function getEventHead($nHeaderID)
 	$db = null;
 	return $result;
 }
-function findEvent($nHeaderID)
+function findEvent($dateHeaderID)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
@@ -83,11 +83,11 @@ function findEvent($nHeaderID)
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('SELECT eh_id, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end
+		$stmt = $db->prepare('SELECT eh_id, eh_address, eh_city, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end
 								from EventHeader natural join EventDates
-							   WHERE eh_id = :headerID');
+							   WHERE ed_id = :headerID');
 
-		$stmt->bindParam(':headerID', $nHeaderID);
+		$stmt->bindParam(':headerID', $dateHeaderID);
 		$stmt->execute();
 	
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -103,7 +103,7 @@ function findEvent($nHeaderID)
 }
 #search for events using an array parameters. currently only supports an array of interests(including any event that match any of those interests)
 #returns array if successful, returns null if error. 
-function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart = "", $sEnd = "", $sInterests = "")
+function SearchEvent($sTitle = "", $sDescription = "", $sCity = "", $sStart = "", $sEnd = "", $sInterests = "")
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
@@ -113,11 +113,11 @@ function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart =
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
 
-		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_address, ed_start, ed_end, eh_rating 
+		$sFields = "SELECT EventHeader.eh_id, eh_title, eh_city, ed_start, ed_end, eh_rating , ed_id
 							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
 							   WHERE ";
 		
-		if ($sTitle == "" && $sDescription == "" && $sAddress == "" && $sStart == "" && $sEnd == "" && $sInterests == "")
+		if ($sTitle == "" && $sDescription == "" && $sCity == "" && $sStart == "" && $sEnd == "" && $sInterests == "")
 		{
 			$sWhere = "1";
 		}
@@ -132,9 +132,9 @@ function SearchEvent($sTitle = "", $sDescription = "", $sAddress = "", $sStart =
 			{	
 				$sWhere .= ($sWhere==""?"":" AND ") . "eh_description LIKE '%" . $sDescription . "%'";
 			}
-			if ($sAddress != "")
+			if ($sCity != "")
 			{
-				$sWhere .= ($sWhere==""?"":" AND ") . "eh_address LIKE '%" . $sAddress . "%'";
+				$sWhere .= ($sWhere==""?"":" AND ") . "eh_city LIKE '%" . $sCity . "%'";
 			}
 			if ($sStart != "")
 			{
@@ -194,7 +194,7 @@ function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 	$db = null;
 }
 
-function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $nCount, $sOwner)
+function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nCycle, $nCount, $sOwner,$sTags)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 
@@ -204,12 +204,13 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, eh_address, us_id)
-				VALUES (:title, :description, :address, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
+		$stmt = $db->prepare('INSERT INTO  EventHeader (eh_title, eh_description, eh_address,eh_city, us_id)
+				VALUES (:title, :description, :address,:city, :owner); SET @parenteh_ID = LAST_INSERT_ID();');
 
 		$stmt->bindParam(':title', $sTitle);
 		$stmt->bindParam(':description', $sDescription);
 		$stmt->bindParam(':address', $sAddress);
+		$stmt->bindParam(':city', $sCity);
 		$stmt->bindParam(':owner', $sOwner);
 
 
@@ -226,7 +227,7 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 
 		$stmt->bindParam(':start',$tStart);
 		$stmt->bindParam(':end',$tEnd);
-			
+
 
 		#first event/once
 		$stmt->execute();
@@ -310,6 +311,17 @@ function buildEvent($sTitle, $sDescription,$sAddress, $sStart, $sEnd, $nCycle, $
 				$stmt->execute();		
 			}
 		}
+
+		$tags = split(",",$sTags);
+		$stmt = $db->prepare('INSERT INTO  EventInterests (eh_id, in_id)
+									VALUES (@parenteh_ID, :tagid)');
+
+		$stmt->bindParam(':tagid',$tagid);
+		foreach ($tags as &$tag){
+			$tagid = $tag;
+			$stmt->execute();	
+		}
+		
 		$db->commit();
 		return "";
 	}

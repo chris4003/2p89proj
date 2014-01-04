@@ -16,17 +16,21 @@
 					<?php 
 						include "../php/event.php";
 
-						$results = findEvent($_GET['id']);
-						foreach ($results as &$row) 
-						{
+						$row = findEvent($_GET['id']);
+						
+						
+							echo "<br>";
 							$start = date_create($row["ed_start"]);
 							$end = date_create($row["ed_end"]);
+
 							echo $row["eh_title"] ;
+							echo $row["eh_description"] ;
 							echo $row["eh_address"];
-							echo date_format($start,"M j, Y") ;
-							echo date_format($end,"M j, Y");
+							echo $row["eh_city"];
+							echo date_format($start,"M j, Y - h:i A");
+							echo date_format($start,"M j, Y - h:i A");
 							echo $row["eh_rating"];	
-						}
+							echo $row["eh_TAGSBRO"];	
 					?>
 
 				</div><!-- content-mid -->
