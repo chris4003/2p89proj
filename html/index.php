@@ -88,6 +88,7 @@
 						Search for events by ... 
 					</p>
 					<form id="search_form" method="get" onsubmit="return getEventTable();">
+					
 				         <div class="labelOrder">
 				            <label for="title">Title:</label> <input type="text" id = "title" name = "title"/><br />
 				            <label for="description">Description:</label> <input type="text" id = "description" name = "description" ><br />
@@ -96,8 +97,8 @@
 				            <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><br />   
 				            <script>
 				            	/* shows time on datepicker, could be hidden using the alt-name input(hidden) and altformat parameter*/
-					            $( "#eventstart" ).datepicker({dateFormat: "mm/dd/yy 00:00:00"});
-					            $( "#eventend" ).datepicker({dateFormat: "mm/dd/yy 23:59:59"});
+					            $( "#eventstart" ).datepicker({dateFormat: "mm/dd/yy 00:00"});
+					            $( "#eventend" ).datepicker({dateFormat: "mm/dd/yy 23:59"});
 				            </script>
 
 

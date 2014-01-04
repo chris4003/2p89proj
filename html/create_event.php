@@ -5,7 +5,7 @@
       ?>
       <title>Create Event</title>
       <script src="../assets/javascripts/toggle_count.js"></script>
-      <script src="../assets/javascripts/createEvent.js"></script>
+      <script src="../assets/javascripts/validation.js"></script>
    </head>
 
    <body>
@@ -100,15 +100,15 @@
       <legend>
          New Event:
       </legend>
-      <form action="create_event.php" method="post" onsubmit="return validateForm(this);"  enctype="multipart/form-data" >
+      <form action="create_event.php" method="post" onsubmit="return validateCreateEvent(this);"  enctype="multipart/form-data" >
          <br />
          <div class="labelOrder">
             <label for="title">Title:</label> <input type="text" id = "title" name = "title"/><br />
             <label for="description">Description:</label> <textarea id = "description" name = "description" cols="40" rows="5"></textarea><br />
             <label for="address">Address:</label> <input type="text" id = "address" name = "address"/><br />
             <label for="city">City:</label> <input type="text" id = "city" name = "city"/><br />
-            <label for="eventstart">Start:</label> <input type="text" id = "eventstart" name = "eventstart"/><input type="text" id = "eventstarttime" name = "eventstarttime" placeholder="Enter Time" /><select id="startampm" name="startampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />
-            <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><input type="text" id = "eventendtime" name = "eventendtime" placeholder="Enter Time" /><select id="endampm" name="endampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />   
+            <label for="eventstart">Start:</label> <input type="text" id = "eventstart" name = "eventstart"/><input type="text" id = "eventstarttime" name = "eventstarttime" value="00:00" /><select id="startampm" name="startampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />
+            <label for="eventend">End:</label> <input type="text" id = "eventend" name = "eventend"/><input type="text" id = "eventendtime" name = "eventendtime" value="00:00" /><select id="endampm" name="endampm"><option value="AM">AM</option><option value="PM">PM</option></select><br />   
             <script>
                $( "#eventstart" ).datepicker();
                $( "#eventend" ).datepicker();

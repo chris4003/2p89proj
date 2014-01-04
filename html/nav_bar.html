@@ -1,9 +1,21 @@
 <div id="nav_bar">
 	<a href="index.php" class="nav_link">Home</a>
 	<?php
-		if (isset($_SESSION['username'])){
-			echo '<a href="create_event.php" class="nav_link">Create Event</a>';
-			echo '<a href="my_events.php" class="nav_link">My Events</a>';
+		
+		if (isset($_SESSION['user_id']))
+		{
+			include '../php/user_tools.php';
+			$aUserInfo = getUserInfo($_SESSION['user_id']);
+			if (!is_null($aUserInfo))
+			{
+				echo '<a href="create_event.php" class="nav_link">Create Event</a>';
+				echo '<a href="my_events.php" class="nav_link">My Events</a>';
+				if ($aUserInfo['us_admin'])
+				{
+					echo '<a href="admin_page.php" class="nav_link">Admin Page</a>';
+					echo '<a href="admin_messages.php" class="nav_link">Admin Messages</a>';				
+				}
+			}
 		}
 	?>
 	<a href="about.php" class="nav_link">About</a>

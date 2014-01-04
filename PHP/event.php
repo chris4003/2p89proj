@@ -1,5 +1,6 @@
 <?php
 
+
 include 'globals.php';
 
 function deleteEvent($nHeaderID)
@@ -11,19 +12,20 @@ function deleteEvent($nHeaderID)
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
 
-		$stmt = $db->prepare('DELETE FROM EventDates WHERE eh_id = :headerID');
-		$stmt = $db->prepare('DELETE FROM EventHeader WHERE eh_id = :headerID');
-		$stmt->bindParam(':headerID', $nHeaderID);
+		$stmt = $db->prepare('DELETE FROM EventDates WHERE eh_id = :headerID;
+							   DELETE FROM EventHeader WHERE eh_id = :headerID');
+		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
 		$stmt->execute();
 		$db->commit();
-		echo "Delete Successful<br />";
+		$return = "";
 	}
 	catch (Exception $e)
 	{
 		$db->rollBack();
-		echo "Delete failed<br />" . $e->getMessage() . "<br />";	
+		$return = "Delete failed<br />" . $e->getMessage() . "<br />";	
 	}
 	$db = null;
+	return $return;
 }
 function deleteEventDate($nDateID)
 {
@@ -35,17 +37,18 @@ function deleteEventDate($nDateID)
 		$db->begintransaction();
 
 		$stmt = $db->prepare('DELETE FROM EventDates WHERE ed_id = :dateID');
-		$stmt->bindParam(':dateID', $nDateID);
+		$stmt->bindValue(':dateID', $nDateID, PDO::PARAM_INT);
 		$stmt->execute();
 		$db->commit();
-		echo "Delete Successful<br />";
+		$return = "";
 	}
 	catch (Exception $e)
 	{
 		$db->rollBack();
-		echo "Delete failed<br />" . $e->getMessage() . "<br />";	
+		$return = "Delete failed<br />" . $e->getMessage() . "<br />";	
 	}
 	$db = null;
+	return $return;
 }
 
 function getEventHead($nHeaderID)
@@ -74,6 +77,7 @@ function getEventHead($nHeaderID)
 	$db = null;
 	return $result;
 }
+
 function findEvent($dateHeaderID)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
@@ -180,7 +184,7 @@ function addTagData($db,$row){
 			$tagArray = array();
 			foreach ($tags as &$tag) 
 			{
-				array_push($tagArray ,$tag["in_description"] );
+				array_push($tagArray, $tag["in_description"] );
 			}
 			$row["tags"] = implode(", ",$tagArray);
 		
@@ -206,12 +210,12 @@ function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 	
 
 		$db->commit();
-		echo "Insert Successful<br />";
+		echo "Update Successful<br />";
 	}
 	catch (Exception $e)
 	{
 		$db->rollBack();
-		echo "Insert fail<br />" . $e->getMessage() . "<br />";	
+		echo "Update fail<br />" . $e->getMessage() . "<br />";	
 	}
 	$db = null;
 }
@@ -346,14 +350,16 @@ function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nC
 		}
 		
 		$db->commit();
-		return "";
+		$return = "";
 	}
 	catch (Exception $e)
 	{
 		$db->rollBack();
-		return $e->getMessage();	
+		$return = $e->getMessage();	
+		file_put_contents("../assets/err.log", $return, FILE_APPEND);
 	}
 	$db = null;
+	return $return;
 }
 
 ?>
