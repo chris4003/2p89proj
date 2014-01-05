@@ -17,18 +17,30 @@
 					<?php 
 						include "../php/event.php";
 
-						$row = findEvent($_GET['id']);
+						$event = findEvent($_GET['id']);
 						
-						$start = date_create($row["ed_start"]);
-						$end = date_create($row["ed_end"]);
+						$start = date_create($event["ed_start"]);
+						$end = date_create($event["ed_end"]);
 
-						echo "<h1>".$row["eh_title"]."</h1><br>" ;
-						echo $row["eh_address"]."<br>";
-						echo $row["eh_city"]."<br>";
-						echo "Start: ".date_format($start,"M j, Y - h:i A")."<br>";
-						echo "End: &nbsp;".date_format($start,"M j, Y - h:i A")."<br>";
-						echo "<p>".$row["eh_description"]."</p>";
-						echo "<p>Tags:<br>".$row["tags"]."</p>";
+						if ($event['us_id'] == $_SESSION['user_id']){ #user owns this event
+							echo "<h1>".$event["eh_title"]."</h1><br>" ;
+							echo "<a href='../php/delete_event.php?id=".$event["ed_id"]."'>Delete this event</a><br>";
+							echo "<form action='../php/update_event.php' method='POST'>";
+							echo "<input type='hidden' value='{$event['ed_id']}'/>";
+							echo "some form fields in hereEEEEEEEEEE<br>";
+							echo "<input type='submit'>";
+							echo "</form>";
+						}
+						else {
+							echo "<h1>".$event["eh_title"]."</h1><br>" ;
+							echo $event["eh_address"]."<br>";
+							echo $event["eh_city"]."<br>";
+							echo "Start: ".date_format($start,"M j, Y - h:i A")."<br>";
+							echo "End: &nbsp;".date_format($start,"M j, Y - h:i A")."<br>";
+							echo "<p>".$event["eh_description"]."</p>";
+							echo "<p>Tags:<br>".$event["tags"]."</p>";
+						}
+						
 					?>
 
 				</div><!-- content-mid -->

@@ -27,6 +27,7 @@ function deleteEvent($nHeaderID)
 	$db = null;
 	return $return;
 }
+
 function deleteEventDate($nDateID)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
@@ -46,6 +47,7 @@ function deleteEventDate($nDateID)
 	{
 		$db->rollBack();
 		$return = "Delete failed<br />" . $e->getMessage() . "<br />";	
+		echo "$return";
 	}
 	$db = null;
 	return $return;
@@ -87,7 +89,7 @@ function findEvent($dateHeaderID)
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('SELECT eh_id, eh_address, eh_city, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end
+		$stmt = $db->prepare('SELECT eh_id, eh_address, eh_city, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end, ed_id
 								from EventHeader natural join EventDates
 							   WHERE ed_id = :headerID');
 
@@ -97,6 +99,36 @@ function findEvent($dateHeaderID)
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		addTagData($db,&$result);
+	}
+	catch (Exception $e)
+	{
+		echo "Select failed<br />" . $e->getMessage() . "<br />";	
+		$result = null;
+	}
+	$db = null;
+	return $result;
+}
+function findEventsByUser($user_id)
+{
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
+	try
+	{
+		
+		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
+		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+		$db->begintransaction();
+		$stmt = $db->prepare("SELECT EventHeader.eh_id, eh_title, eh_city, ed_start, ed_end, eh_rating, eh_image_name, ed_id
+							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
+							   WHERE us_id = {$_SESSION['user_id']}");
+
+		$stmt->execute();
+	
+		$result = $stmt->fetchall();
+
+		foreach ($result as &$row) 
+		{
+			addTagData($db,&$row);
+		}
 	}
 	catch (Exception $e)
 	{
