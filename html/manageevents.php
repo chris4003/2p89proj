@@ -27,14 +27,14 @@
 						# showing the results  
 						echo "<table>
 								<tr>
-									<th style='width:90px;'> Event ID</th>
-									<th style='width:90px;'> Date ID</th>
-									<th style='width:120px;'> Title</th>
-									<th style='width:120px;'> City</th>
-									<th style='width:90px;'> Start</th>
-									<th style='width:90px;'> End</th>
-									<th style='width:100px;'> Tags</th>
-									<th colspan='3'  style='width:150px;'>Actions</th>
+									<th style='width:90px; border-left:1px solid black; border-bottom:1px solid black'> Event ID</th>
+									<th style='width:90px; border-left:1px solid black; border-bottom:1px solid black'> Date ID</th>
+									<th style='width:120px; border-left:1px solid black; border-bottom:1px solid black'> Title</th>
+									<th style='width:120px; border-left:1px solid black; border-bottom:1px solid black'> City</th>
+									<th style='width:90px; border-left:1px solid black; border-bottom:1px solid black'> Start</th>
+									<th style='width:90px; border-left:1px solid black; border-bottom:1px solid black'> End</th>
+									<th style='width:100px; border-left:1px solid black; border-bottom:1px solid black'> Tags</th>
+									<th colspan='3'  style='width:150px; border-left:1px solid black; border-bottom:1px solid black'>Actions</th>
 								</tr>";
 							
 						foreach ($aEvents as &$row) 

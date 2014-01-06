@@ -51,9 +51,9 @@ a {
 #nav_bar a{
 	text-transform:uppercase;
 	margin:0 10px;
-	padding:20px;
+	padding:10px;
 	display:inline-block;
-	width:125px;
+	width:100px;
 }
 #nav_bar a:hover{
 	background-color:#CC0000;

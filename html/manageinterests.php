@@ -26,10 +26,10 @@
 						# showing the results  
 						echo "<table>
 							<tr>
-								<th style='width:150px;'> Interest ID</th>
-								<th style='width:250px;'> Descrition</th>
-								<th style='width:150px;'> Parent Interest</th>
-								<th colspan='2' style='width:100px;'>Actions</th>
+								<th style='width:150px; border-left:1px solid black; border-bottom:1px solid black'> Interest ID</th>
+								<th style='width:250px; border-left:1px solid black; border-bottom:1px solid black'> Descrition</th>
+								<th style='width:150px; border-left:1px solid black; border-bottom:1px solid black'> Parent Interest</th>
+								<th colspan='2' style='width:100px; border-left:1px solid black; border-bottom:1px solid black'>Actions</th>
 							</tr>";
 							
 						foreach ($aInterests as &$row) 

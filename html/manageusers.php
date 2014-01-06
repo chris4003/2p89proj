@@ -26,12 +26,12 @@
 						# showing the results  
 						echo "<table>
 							<tr>
-								<th style='width:150px;'> UserID</th>
-								<th style='width:150px;'> Username</th>
-								<th style='width:250px;'> Display Name</th>
-								<th style='width:150px;'> Location</th>
-								<th style='width:300px;'> Email</th>
-								<th colspan='2' style='width:100px;'>Actions</th>
+								<th style='width:150px; border-left:1px solid black; border-bottom:1px solid black'> UserID</th>
+								<th style='width:150px; border-left:1px solid black; border-bottom:1px solid black'> Username</th>
+								<th style='width:250px; border-left:1px solid black; border-bottom:1px solid black'> Display Name</th>
+								<th style='width:150px; border-left:1px solid black; border-bottom:1px solid black'> Location</th>
+								<th style='width:300px; border-left:1px solid black; border-bottom:1px solid black'> Email</th>
+								<th colspan='2' style='width:100px; border-left:1px solid black; border-bottom:1px solid black'>Actions</th>
 							</tr>";
 							
 						foreach ($aUsers as &$row) 

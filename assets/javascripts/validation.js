@@ -96,6 +96,7 @@ function validateEditEvent(fEditEvent)
 	var sTitle = fEditEvent.title.value;
 	var sDescription = fEditEvent.description.value;
 	var sAddress = fEditEvent.address.value;
+	var sCity = fEditEvent.city.value;
 	var sStart = fEditEvent.eventstart.value;
 	var sStartTime = fEditEvent.eventstarttime.value;
 	var sEnd = fEditEvent.eventend.value;
@@ -127,6 +128,11 @@ function validateEditEvent(fEditEvent)
 	if (!reText.test(sAddress))
 	{
 		sErrors += "Invalid Address\n";
+	}
+
+	if (!reText.test(sCity))
+	{
+		sErrors += "Invalid City\n";
 	}
 
 	if (!reDates.test(sStart))
@@ -277,15 +283,15 @@ function validateUser(fNewUser)
 	}
 }
 
-function validateEditUser(fEditUser) 
+function validateEditUser(fEditUser)
 {
+
 	var sUserID = fEditUser.userID.value;
 	var sUserName = fEditUser.username.value;
 	var sDisplayName = fEditUser.displayname.value;
 	var sLocation = fEditUser.location.value;
 	var sEmail = fEditUser.email.value;
 	
-	alert(sUserID);
 	var reText = /^[\w\s]+$/;
 	var reMemo = /^[^'"]*$/;
 	var reTextNoSpace = /^[\w]+$/;
