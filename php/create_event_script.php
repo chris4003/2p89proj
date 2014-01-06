@@ -12,8 +12,15 @@
         $pEventStart = $_POST["eventstart"] . "00:00:00";
      }
      else
-     {
-        $pEventStart = $_POST["eventstart"] . $_POST["eventstarttime"];     
+     {  
+        if (is_numeric($_POST['eventstarttime']))
+        {
+            $pEventStart = $_POST["eventstart"] . $_POST["eventstarttime"] . ":00:00";         
+        }
+        else
+        {
+            $pEventStart = $_POST["eventstart"] . $_POST["eventstarttime"];
+        }
         if ($_POST["startampm"] == "PM")
         {
            $pEventStart = date("m/d/y H:i:s", strtotime($pEventStart) + (12*3600));       
@@ -31,7 +38,14 @@
      }
      else
      {
-        $pEventEnd = $_POST["eventend"] . $_POST["eventendtime"];     
+        if (is_numeric($_POST['eventendtime']))
+        {
+            $pEventStart = $_POST["eventend"] . $_POST["eventendtime"] . ":00:00";         
+        }
+        else
+        {
+            $pEventEnd = $_POST["eventend"] . $_POST["eventendtime"];
+        }
         if ($_POST["endampm"] == "PM")
         {
            $pEventEnd = date("m/d/y H:i:s", strtotime($pEventEnd) + (12*3600));
@@ -46,7 +60,8 @@
      $pCount = $_POST["count"];
      $pTags  = $_POST['tagids'];
 
-     if ($_FILES["userfile"]["name"]){
+     if ($_FILES["userfile"]["name"])
+     {
         $uploaddir = '../assets/images/uploaded/';
          $new_image_name = $_SESSION['user_id']."_".$_FILES["userfile"]["name"];
          $uploadfilepath = $uploaddir.$new_image_name;
@@ -64,6 +79,11 @@
             print "Error uploading the image"."<br />";
         }
      }
+     else
+     {
+        $new_image_name = "";
+     }
+
      $printstuff = buildEvent($pTitle, $pDescription,$pAddress,$pCity, $pEventStart, $pEventEnd, $pCycle, $pCount, $_SESSION['user_id'],$pTags,$new_image_name);
      
      if ($printstuff == "")

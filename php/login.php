@@ -4,10 +4,12 @@
 	include "../php/flash_tools.php"; 
 
 	if ($_POST){
-		$user_id = validateUser($_POST['username'],$_POST['password']);
-		if ($user_id){
-			$_SESSION['username'] = $_POST['username'];
-			$_SESSION['user_id'] = $user_id;
+		$userinfo = validateUser($_POST['username'],$_POST['password']);
+		if (!is_null($userinfo))
+		{
+			$_SESSION['username'] = $userinfo['us_name'];
+			$_SESSION['user_id'] = $userinfo['us_id'];
+			$_SESSION['user_admin'] = $userinfo['us_admin'];
 			set_flash_message("Thanks {$_SESSION['username']}, you are now logged in.");
 		}
 		else {

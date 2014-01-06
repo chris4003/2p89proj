@@ -3,6 +3,7 @@
       include 'html_head.html'; 
       ?>
 		<title> wewt.com </title>
+		<script src="../assets/javascripts/validation.js"></script>
 	</head>
 
 	<body>
@@ -19,7 +20,7 @@
 						<p>
 							In order to make your account, we need to collect a few pieces of information.  Please fill out the following form to register.
 						</p>
-						<form action = "../php/register.php" method = "post">
+						<form action = "../php/register.php" method = "post" onsubmit="return validateUser(this);">
 							<label for="username">Username:</label><br />
 							<input type="text" id = "username" name = "username"/><br />
 							<label for="realname">Real Name:</label> <br />

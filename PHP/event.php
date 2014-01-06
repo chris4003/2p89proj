@@ -11,11 +11,16 @@ function deleteEvent($nHeaderID)
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-
-		$stmt = $db->prepare('DELETE FROM EventDates WHERE eh_id = :headerID;
-							   DELETE FROM EventHeader WHERE eh_id = :headerID');
+		
+		$stmt = $db->prepare('DELETE FROM EventDates WHERE eh_id = :headerID');
 		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
 		$stmt->execute();
+		
+		$stmt = $db->prepare('DELETE FROM EventHeader WHERE eh_id = :headerID');
+		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
+		$stmt->execute();
+		
+
 		$db->commit();
 		$return = "";
 	}
@@ -31,15 +36,52 @@ function deleteEvent($nHeaderID)
 function deleteEventDate($nDateID)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
+
+	$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
+	$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
 	try
 	{
-		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
-		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+		$stmt = $db->prepare('SELECT eh_id FROM EventDates WHERE ed_id = :dateID');
+		$stmt->bindValue(':dateID', $nDateID, PDO::PARAM_INT);
+		$stmt->execute();
+
+		$nEventID = $stmt->fetchColumn();
+		if ($nEventID)
+		{
+			$stmt = $db->prepare('SELECT COUNT(ed_id) as datecount 
+								FROM EventDates 
+								WHERE eh_id = :headerID');			
+			$stmt->bindValue(':headerID', $nEventID, PDO::PARAM_INT);
+			$stmt->execute();
+			$result = $stmt->fetchColumn();
+		}
+		else
+		{
+			$result = 0;
+		}
+	}
+	catch(Exception $e)
+	{
+		$result = 0;
+	}
+
+	try
+	{
 		$db->begintransaction();
 
 		$stmt = $db->prepare('DELETE FROM EventDates WHERE ed_id = :dateID');
 		$stmt->bindValue(':dateID', $nDateID, PDO::PARAM_INT);
 		$stmt->execute();
+
+		if ($result == 1)
+		{
+			$stmt = $db->prepare('DELETE FROM EventHeader WHERE eh_id = :headerID');
+			$stmt->bindValue(':headerID', $nEventID, PDO::PARAM_INT);
+			$stmt->execute();
+		}
+
+
 		$db->commit();
 		$return = "";
 	}
@@ -47,7 +89,6 @@ function deleteEventDate($nDateID)
 	{
 		$db->rollBack();
 		$return = "Delete failed<br />" . $e->getMessage() . "<br />";	
-		echo "$return";
 	}
 	$db = null;
 	return $return;
@@ -80,7 +121,8 @@ function getEventHead($nHeaderID)
 	return $result;
 }
 
-function findEvent($dateHeaderID)
+
+function findEventByDateID($nDateID)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
@@ -88,12 +130,11 @@ function findEvent($dateHeaderID)
 		
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-		$db->begintransaction();
-		$stmt = $db->prepare('SELECT eh_id, eh_address, eh_city, eh_title, eh_description, eh_rating, us_id, ed_start, ed_end, ed_id
+		$stmt = $db->prepare('SELECT eh_id, eh_address, eh_city, eh_title, eh_description, eh_rating, eh_image_name, us_id, ed_start, ed_end, ed_id
 								from EventHeader natural join EventDates
-							   WHERE ed_id = :headerID');
+							   WHERE ed_id = :dateID');
 
-		$stmt->bindParam(':headerID', $dateHeaderID);
+		$stmt->bindValue(':dateID', $nDateID, PDO::PARAM_INT);
 		$stmt->execute();
 	
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -119,8 +160,8 @@ function findEventsByUser($user_id)
 		$db->begintransaction();
 		$stmt = $db->prepare("SELECT EventHeader.eh_id, eh_title, eh_city, ed_start, ed_end, eh_rating, eh_image_name, ed_id
 							   FROM EventHeader inner join EventDates on EventHeader.eh_id = EventDates.eh_id
-							   WHERE us_id = {$_SESSION['user_id']}");
-
+							   WHERE us_id = :OwnerID");
+		$stmt->bindValue(':OwnerID', $user_id, PDO::PARAM_INT);
 		$stmt->execute();
 	
 		$result = $stmt->fetchall();
@@ -209,20 +250,23 @@ function addTagData($db,$row){
 		#add tag data for the index page
 		
 
-			$stmt = $db->prepare("SELECT in_description from EventInterests natural join Interests where eh_id = " . $row["eh_id"]);
+			$stmt = $db->prepare("SELECT in_id, in_description from EventInterests natural join Interests where eh_id = " . $row["eh_id"]);
 			$stmt->execute();
 			$tags = $stmt->fetchall();
 
+			$tagIDArray = array();
 			$tagArray = array();
 			foreach ($tags as &$tag) 
 			{
+				array_push($tagIDArray, $tag["in_id"] );
 				array_push($tagArray, $tag["in_description"] );
 			}
+			$row["tagIDs"] = implode(",",$tagIDArray);
 			$row["tags"] = implode(", ",$tagArray);
 		
 }
 
-function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
+function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sAddress, $sCity, $sOwner, $sTagsIDs, $sImage_name)
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
 	try
@@ -231,26 +275,80 @@ function modifyEventHead($nHeaderID, $sTitle, $sDescription, $sOwner)
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		$db->begintransaction();
-		$stmt = $db->prepare('UPDATE EventHeader (eh_title, eh_description, us_id)
-				VALUES (:title, :description, :owner) WHERE eh_id = :headerID');
+		$stmt = $db->prepare('UPDATE EventHeader SET eh_title = :title, eh_description = :description, eh_address = :address, 
+						 		eh_city = :city, eh_image_name = :image, us_id = :owner 
+								WHERE eh_id = :headerID');
 
-		$stmt->bindParam(':headerID', $nHeaderID);
-		$stmt->bindParam(':title', $sTitle);
-		$stmt->bindParam(':description', $sDescription);
-		$stmt->bindParam(':owner', $sOwner);
+		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
+		$stmt->bindValue(':title', $sTitle, PDO::PARAM_STR);
+		$stmt->bindValue(':description', $sDescription, PDO::PARAM_STR);
+		$stmt->bindValue(':address', $sAddress, PDO::PARAM_STR);
+		$stmt->bindValue(':city', $sCity, PDO::PARAM_STR);
+		$stmt->bindValue(':image', $sImage_name, PDO::PARAM_STR);
+		$stmt->bindValue(':owner', $sOwner, PDO::PARAM_STR);
 		$stmt->execute();
-	
 
+
+		$stmt = $db->prepare('DELETE FROM  EventInterests 
+									WHERE eh_id = :headerID');
+		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
+		$stmt->execute();		
+
+
+		$aTagIDs = split(",",$sTagsIDs);
+		$stmt = $db->prepare('INSERT INTO  EventInterests (eh_id, in_id) 
+									VALUES (:headerID, :tagid)');
+		$stmt->bindValue(':headerID', $nHeaderID, PDO::PARAM_INT);
+		$stmt->bindParam(':tagid',$tagID);
+		foreach ($aTagIDs as &$nTagID)
+		{
+			$tagID = $nTagID;
+			$stmt->execute();	
+		}
+
+		
 		$db->commit();
-		echo "Update Successful<br />";
+		return "";
 	}
 	catch (Exception $e)
 	{
-		$db->rollBack();
-		echo "Update fail<br />" . $e->getMessage() . "<br />";	
+		return "Update Event Header failed<br />" . $e->getMessage() . "<br />";	
 	}
 	$db = null;
 }
+
+function modifyEventDate($nDateID, $sStart, $sEnd)
+{
+	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;
+	try
+	{
+		
+		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
+		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+		
+		$stmt = $db->prepare('UPDATE EventDates set ed_start = :start, ed_end = :end 
+								WHERE ed_id = :dateID');
+
+		$dtStart = new DateTime($sStart);
+		$dtEnd = new DateTime($sEnd);
+
+		$tmpStart = $dtStart->format('Y-m-d H:i:s');
+		$tmpEnd = $dtEnd->format('Y-m-d H:i:s');
+
+		$stmt->bindValue(':dateID', $nDateID, PDO::PARAM_INT);
+		$stmt->bindValue(':start', $tmpStart, PDO::PARAM_STR);
+		$stmt->bindValue(':end', $tmpEnd, PDO::PARAM_STR);
+		$stmt->execute();
+	
+		return "";
+	}
+	catch (Exception $e)
+	{
+		return "Update Event Date failed<br />" . $e->getMessage() . "<br />";	
+	}
+	$db = null;
+}
+
 
 function buildEvent($sTitle, $sDescription,$sAddress,$sCity, $sStart, $sEnd, $nCycle, $nCount, $sOwner,$sTags,$sImage_name)
 {

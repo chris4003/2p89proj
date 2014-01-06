@@ -2,6 +2,8 @@
 
 include 'globals.php';
 
+
+
 function getInterestsOptions()
 {
 	global $SERVER, $USERNAME, $PASSWORD, $DATABASE;

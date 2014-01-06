@@ -1,8 +1,9 @@
 #!/usr/bin/php-cgi
 <?php 
-      include 'html_head.html'; 
-      ?>
-		<title> wewt.com </title>
+	$pagetype = 2;
+    include 'html_head.html'; 
+?>
+	<title> wewt.com </title>
 	</head>
 
 	<body>
@@ -15,32 +16,20 @@
 					<?php include "../html/flash_message.php"; ?>
 					<?php 
 
-					include "../php/admin_tools.php"; 
-					if (isset($_SESSION['user_id']))
-					{
-						$aUserInfo = getUserInfo($_SESSION['user_id']);
-						if (!is_null($aUserInfo))
+						include "../php/admin_tools.php"; 
+						if (isset($_SESSION['user_id']))
 						{
-							if ($aUserInfo['us_admin'])
+							$aUserInfo = getUserInfo($_SESSION['user_id']);
+							if (!is_null($aUserInfo))
 							{
-								echo "Display Events table<br />";
-								echo "Display Users table<br />";
-								echo "Display Interest table<br />";
-							}
-							else
-							{
-								echo "Insufficient security<br />";
+								if ($aUserInfo['us_admin'])
+								{
+									echo "<a href='../html/manageevents.php'>Manage Events table</a><br />";
+									echo "<a href='../html/manageusers.php'>Manage Users table</a><br />";
+									echo "<a href='../html/manageinterests.php'>Manage Interests table</a><br />";
+								}
 							}
 						}
-						else
-						{
-							echo "Invalid User<br />";
-						}
-					}
-					else
-					{
-						echo "please log in<br />";
-					}
 					?>
 				</div><!-- content-mid -->
 

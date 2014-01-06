@@ -8,7 +8,11 @@ Brock University, COSC 2P89
 Fall/winter
 -->
 
-<?php session_start(); ?>
+<?php 
+	session_start();
+	include '../php/checksecurity.php';
+?>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />

@@ -1,5 +1,6 @@
 #!/usr/bin/php-cgi
 <?php 
+	  $pagetype = 2;
       include 'html_head.html'; 
       ?>
 		<title> wewt.com </title>

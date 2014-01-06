@@ -6,16 +6,18 @@
 		set_flash_message("Passwords do not match.");
 	}
 	else {
-		$displayname = $_POST['username'];
+		$displayname = $_POST['realname'];
 		$email = $_POST['email'];
-		$name = $_POST['realname'];
+		$name = $_POST['username'];
 		$password = $_POST['password'];
 	    newUser($name, $password, $displayname, $email);
 
-		$user_id = validateUser($_POST['username'],$_POST['password']);
-		if ($user_id){
-			$_SESSION['username'] = $_POST['username'];
-			$_SESSION['user_id'] = $user_id;
+		$userinfo = validateUser($_POST['username'],$_POST['password']);
+		if (!is_null($userinfo))
+		{
+			$_SESSION['username'] = $userinfo['us_name'];
+			$_SESSION['user_id'] = $userinfo['us_id'];
+			$_SESSION['user_admin'] = $userinfo['us_admin'];
 		}
 		set_flash_message("Account created.  You're now logged in.");
 	}

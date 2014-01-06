@@ -87,22 +87,18 @@ function validateUser ($sName,$sPassword){
 		$db = new PDO("mysql:dbname={$DATABASE}; host={$SERVER}", $USERNAME, $PASSWORD);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 
-		$stmt = $db->prepare("select us_id from Users where us_name = :name and us_password = :password");  
+		$stmt = $db->prepare("select us_id, us_name, us_admin from Users where us_name = :name and us_password = :password");  
 		$stmt->bindValue(':name', $sName, PDO::PARAM_STR);
 		$stmt->bindValue(':password', crypt($sPassword,$key), PDO::PARAM_STR);
 		$stmt->execute();
-		$stmt->setFetchMode(PDO::FETCH_OBJ);
 
-		while($row = $stmt->fetch()) 
-		{  
-			return $row->us_id; #LOL FUCKING HACKED IT BRO, EZ
-		}
+		return $stmt->fetch(PDO::FETCH_ASSOC);
 	}
 	catch (PDOException $e)
 	{
 		echo "Validation failed<br />" . $e->getMessage() . "<br />";	
+		return null;
 	}
-	return 0;
 	$db = null;
 }
 

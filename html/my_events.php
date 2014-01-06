@@ -1,7 +1,10 @@
 #!/usr/bin/php-cgi
-<?php 
-      include 'html_head.html'; 
-      ?>
+<?php
+
+$pagetype=1;
+include 'html_head.html';	
+
+?>
 		<title> wewt.com </title>
 		
 	</head>

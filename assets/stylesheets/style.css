@@ -67,6 +67,7 @@ a {
 	background-color:inherit;
 	padding:20px;
 	width:950px;
+	min-height:400px;
 	margin:0 auto;
 	padding-bottom:112px; /*92 pixels is the footer + 20 padding*/
 }
