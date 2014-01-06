@@ -27,8 +27,8 @@
 						# showing the results  
 						echo "<table>
 								<tr>
-									<th style='width:90px;'> Date ID</th>
 									<th style='width:90px;'> Event ID</th>
+									<th style='width:90px;'> Date ID</th>
 									<th style='width:120px;'> Title</th>
 									<th style='width:120px;'> City</th>
 									<th style='width:90px;'> Start</th>
@@ -43,8 +43,8 @@
 							$end = date_create($row["ed_end"]);
 
 							$tablerow = "<tr>" .
-											"<td>" . $row["ed_id"] . "</td>" .
 											"<td>" . $row["eh_id"] . "</td>" .
+											"<td>" . $row["ed_id"] . "</td>" .
 						    				"<td>" . $row["eh_title"] . "</td>" .
 								    		"<td>" . $row["eh_city"] . "</td>" .
 								    		"<td>" . date_format($start,"M j, Y    h:i A") . "</td>" .

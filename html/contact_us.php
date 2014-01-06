@@ -39,14 +39,14 @@
 						<p>
 							Please let us know what you think:<br /><br />
 
-							<label for="name">Name:</label><br />
+							<label for="name">Name*:</label><br />
 							 <input type="text" id = "name" name = "name"/><br />
-							<label for="email">E-mail Address:</label><br />
+							<label for="email">E-mail Address*:</label><br />
 							 <input type="text" id = "email" name = "email"/><br />
-							<label for="subject">Subject:</label><br />
+							<label for="subject">Subject*:</label><br />
 							 <input type="text" id = "subject" name = "subject"/><br />
 
-		            		<label for="message">Message:</label><br />
+		            		<label for="message">Message*:</label><br />
 		            		 <textarea id = "message" name = "message" cols="40" rows="5">Enter your message here.</textarea><br />
             				
 						</p>

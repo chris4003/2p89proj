@@ -17,29 +17,34 @@
 					<?php 
 						include "../php/event.php";
 
-						$event = findEvent($_GET['id']);
+						$event = findEventByDateID($_GET['id']);
 						
 						$start = date_create($event["ed_start"]);
 						$end = date_create($event["ed_end"]);
 
-						if ($event['us_id'] == $_SESSION['user_id']){ #user owns this event
-							echo "<h1>".$event["eh_title"]."</h1><br>" ;
-							echo "<a href='../php/delete_event.php?id=".$event["ed_id"]."'>Delete this event</a><br>";
-							echo "<form action='../php/update_event.php' method='POST'>";
-							echo "<input type='hidden' value='{$event['ed_id']}'/>";
-							echo "some form fields in hereEEEEEEEEEE<br>";
-							echo "<input type='submit'>";
-							echo "</form>";
+						echo "<table style='border: 1px solid black;'><tr><td>";
+						echo "<h1>".$event["eh_title"]."</h1><br />" ;
+						echo "Address:<br />";
+						echo "&nbsp;" . $event["eh_address"]."<br />";
+						echo "&nbsp;" . $event["eh_city"]."<br /><br />";
+						echo "Start: <br />&nbsp;".date_format($start,"M j, Y - h:i A")."<br />";
+						echo "End: <br />&nbsp;".date_format($start,"M j, Y - h:i A")."<br /><br>";
+
+						echo "<p>Tags:<br />&nbsp;".$event["tags"]."</p>";
+						echo "</td><td align=Center>";
+						if ($event["eh_image_name"] != "")
+						{
+		    				echo "<img class='thumbnail' src='../assets/images/uploaded/" . $event["eh_image_name"] . "'/>";
 						}
-						else {
-							echo "<h1>".$event["eh_title"]."</h1><br>" ;
-							echo $event["eh_address"]."<br>";
-							echo $event["eh_city"]."<br>";
-							echo "Start: ".date_format($start,"M j, Y - h:i A")."<br>";
-							echo "End: &nbsp;".date_format($start,"M j, Y - h:i A")."<br>";
-							echo "<p>".$event["eh_description"]."</p>";
-							echo "<p>Tags:<br>".$event["tags"]."</p>";
-						}
+		    			else
+		    			{
+		    				echo "<img class='thumbnail' src='../assets/images/No_image.jpg' />";
+		    			}
+						echo "</td></tr><tr><td colspan='2'>";
+						echo "<p>&nbsp;".$event["eh_description"]."</p>";
+						echo "</td></tr></table>";
+
+						
 						
 					?>
 

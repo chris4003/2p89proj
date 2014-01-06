@@ -23,7 +23,7 @@
 						<form action = "../php/register.php" method = "post" onsubmit="return validateUser(this);">
 							<label for="username">Username:</label><br />
 							<input type="text" id = "username" name = "username"/><br />
-							<label for="realname">Real Name:</label> <br />
+							<label for="realname">Display Name:</label> <br />
 							<input type="text" id = "realname" name = "realname"/><br />
 							<label for="email">E-mail Address:</label> <br />
 							<input type="text" id = "email" name = "email"/><br />

@@ -17,15 +17,9 @@
 				<div id="content_mid">
 					<?php include "../html/flash_message.php"; ?>
 					<h1>Events</h1>
-					<?php #loads events k
-						include '../php/event.php';
-						$aEvents = SearchEvent("","","", date("Y/m/d H:i:s"),  date("Y/m/d 23:59:59", time()+(7*24*3600)));	
-					  	
-						if (!is_null($aEvents))
-						{
-							include "render_event_table.php";
-						}
-					?>
+					<script> 
+						getEventTable();
+					</script>
 
 				</div><!-- content-mid -->
 				<div id="right_bar" >

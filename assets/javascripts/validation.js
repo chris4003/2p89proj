@@ -14,6 +14,7 @@ function validateCreateEvent(fCreateEvent)
 
 
 	var reText = /^[\w\s]+$/;
+	var reMemo = /^[^'"]*$/;
 	var reTagIds = /^[0-9,]+$/;
 	var reDates = /^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/;
 	var reTimes1 = /^([0-9]|0[0-9]|1[0-2]):[0-5][0-9]:[0-5][0-9]$/
@@ -27,7 +28,7 @@ function validateCreateEvent(fCreateEvent)
 		sErrors += "Invalid Title\n";
 	}
 
-	if (!reText.test(sDescription))
+	if (!reMemo.test(sDescription))
 	{
 		sErrors += "Invalid Description\n";
 	}
@@ -100,15 +101,17 @@ function validateEditEvent(fEditEvent)
 	var sEnd = fEditEvent.eventend.value;
 	var sEndTime = fEditEvent.eventendtime.value;
 	var sInterests = fEditEvent.tagids.value;
+	var sUserID = fEditEvent.userID.value;
 
 
 	var reText = /^[\w\s]+$/;
+	var reMemo = /^[^'"]*$/;
 	var reTagIds = /^[0-9,]+$/;
 	var reDates = /^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/;
 	var reTimes1 = /^([0-9]|0[0-9]|1[0-2]):[0-5][0-9]:[0-5][0-9]$/
 	var reTimes2 = /^([0-9]|0[0-9]|1[0-2]):[0-5][0-9]$/
 	var reTimes3 = /^([0-9]|0[0-9]|1[0-2])$/
-	var reCount = /^[0-9]{1,2}$/;
+	var reID = /^[0-9]+$/;
 
 	var sErrors = "";
 	if (!reText.test(sTitle))
@@ -116,7 +119,7 @@ function validateEditEvent(fEditEvent)
 		sErrors += "Invalid Title\n";
 	}
 
-	if (!reText.test(sDescription))
+	if (!reMemo.test(sDescription))
 	{
 		sErrors += "Invalid Description\n";
 	}
@@ -159,6 +162,13 @@ function validateEditEvent(fEditEvent)
 		sErrors += "Invalid Tags\n";
 	}
 
+	if (!reID.test(sUserID))
+	{
+		sErrors += "Invalid User ID\n";
+	}
+
+
+
 	if (sErrors === "")
 	{
 		return true;
@@ -180,21 +190,26 @@ function validateContact(fContactUs)
 	var sMessage = fContactUs.message.value;
 
 	var reText = /^[\w\s]+$/;
+	var reMemo = /^[^'"]*$/;
+	var reEmail = /^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$/;
 	var sErrors = "";
 
 	if (!reText.test(sName))
 	{
 		sErrors += "Invalid Name\n";
 	}
-	if (!reText.test(sSubject))
-	{
-		sErrors += "Invalid Subject\n";
-	}
-	if (!reText.test(sEmail))
+
+	if (!reEmail.test(sEmail))
 	{
 		sErrors += "Invalid Email\n";
 	}
-	if (!reText.test(sMessage))
+
+	if (!reMemo.test(sSubject) || sSubject === "")
+	{
+		sErrors += "Invalid Subject\n";
+	}
+
+	if (!reMemo.test(sMessage) || sMessage === "")
 	{
 		sErrors += "Invalid Message\n";
 	}
@@ -209,7 +224,6 @@ function validateContact(fContactUs)
 		return false;
 	}
 }
-
 
 function validateUser(fNewUser) 
 {
@@ -232,7 +246,7 @@ function validateUser(fNewUser)
 	}
 	if (!reText.test(sRealName))
 	{
-		sErrors += "Invalid Real Name\n";
+		sErrors += "Invalid Display Name\n";
 	}
 	if (!reEmail.test(sEmail))
 	{
@@ -252,6 +266,57 @@ function validateUser(fNewUser)
 		sErrors += "Password and password check do not match\n";
 	}
 	
+	if (sErrors === "")
+	{
+		return true;
+	}
+	else
+	{
+		alert(sErrors);
+		return false;
+	}
+}
+
+function validateEditUser(fEditUser) 
+{
+	var sUserID = fEditUser.userID.value;
+	var sUserName = fEditUser.username.value;
+	var sDisplayName = fEditUser.displayname.value;
+	var sLocation = fEditUser.location.value;
+	var sEmail = fEditUser.email.value;
+	
+	alert(sUserID);
+	var reText = /^[\w\s]+$/;
+	var reMemo = /^[^'"]*$/;
+	var reTextNoSpace = /^[\w]+$/;
+	var reEmail = /^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$/;
+	var reID = /^[0-9]+$/;
+
+	var sErrors = "";
+
+	if (!reID.test(sUserID))
+	{
+		sErrors += "Invalid User ID\n";
+	}
+	if (!reTextNoSpace.test(sUserName))
+	{
+		sErrors += "Invalid User Name\n";
+	}
+	if (!reText.test(sDisplayName))
+	{
+		sErrors += "Invalid Display Name\n";
+	}
+
+	if (!reMemo.test(sLocation) || sLocation === "")
+	{
+		sErrors += "Invalid Location\n";
+	}
+
+	if (!reEmail.test(sEmail))
+	{
+		sErrors += "Invalid Email\n";
+	}
+
 	if (sErrors === "")
 	{
 		return true;

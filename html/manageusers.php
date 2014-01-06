@@ -15,44 +15,36 @@
 				<div id="content_mid">
 					<?php include "../html/flash_message.php"; ?>
 					<?php 
-
-					include "../php/event_tools.php"; 
-					$aEvents = SearchEvent();
-					if (count($aEvents) == 0)
+					include_once '../php/user_tools.php';
+					$aUsers = SearchUsers();
+					if (count($aUsers) == 0)
 					{
-						echo "No Data";
+						echo "No Users";
 					}
 					else
 					{
 						# showing the results  
 						echo "<table>
 							<tr>
-								<th></th>
-								<th> Title</th>
-								<th> City</th>
-								<th> Start</th>
-								<th> End</th>
-								<th> Tags</th>
-								<th> </th>
-								<th> </th>
+								<th style='width:150px;'> UserID</th>
+								<th style='width:150px;'> Username</th>
+								<th style='width:250px;'> Display Name</th>
+								<th style='width:150px;'> Location</th>
+								<th style='width:300px;'> Email</th>
+								<th colspan='2' style='width:100px;'>Actions</th>
 							</tr>";
 							
-						foreach ($aEvents as &$row) 
+						foreach ($aUsers as &$row) 
 						{
-							$start = date_create($row["ed_start"]);
-							$end = date_create($row["ed_end"]);
-
-							$tablerow = "<tr>";
-						    $tablerow .=	"<td>" . $row["eh_title"] . "</td>" .
-								    		"<td>" . $row["eh_city"] . "</td>" .
-								    		"<td>" . date_format($start,"M j, Y - h:i A") . "</td>" .
-								    		"<td>" . date_format($end,"M j, Y - h:i A") . "</td>" .
-								    		"<td>" . $row["tags"] . "</td>" .
-								    		"<td><a href='edit_event.php?id=" . $row["ed_id"] . "'>edit</td>" .  
-								    		"<td><a href='delete_event.php?id=" . $row["ed_id"] . "'>delete</td>" .  
-							    		"</tr>";	
-						    echo $tablerow;
-						    
+							echo 	"<tr>" .
+										"<td>" . $row["us_id"] . "</td>" .
+					    				"<td>" . $row["us_name"] . ($row["us_admin"]?"*":"") ."</td>" .
+							    		"<td>" . $row["us_displayname"] . "</td>" .
+							    		"<td>" . $row["us_location"] . "</td>" .
+							    		"<td>" . $row["us_email"] . "</td>" .
+							    		"<td><a href='edit_user.php?UserID=" . $row["us_id"] . "'>Edit</td>" .  
+							    		"<td><a href='delete_user.php?UserID=" . $row["us_id"] . "'>Delete</td>" .  
+						    		"</tr>";	
 						}
 
 						echo "</table>";
